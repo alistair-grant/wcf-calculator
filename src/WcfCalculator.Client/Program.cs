@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ServiceModel;
 using WcfCalculator.Client.ServiceReferences;
 using static System.Console;
 
@@ -14,10 +15,11 @@ namespace WcfCalculator.Client
                 ReadKey(true);
 
                 var random = new Random();
-                var n1 = random.Next(50);
-                var n2 = random.Next(50);
+                var n1 = random.Next(100);
+                var n2 = random.Next(100 - n1);
 
-                var result = AddWithCalculatorClient(n1, n2);
+                //var result = AddWithCalculatorClient(n1, n2);
+                var result = AddWithChannelFactory(n1, n2);
 
                 WriteLine($"{n1} + {n2} = {result}");
             }
@@ -42,6 +44,15 @@ namespace WcfCalculator.Client
             using (var client = new CalculatorClient())
             {
                 return client.Add(n1, n2);
+            }
+        }
+
+        private static double AddWithChannelFactory(double n1, double n2)
+        {
+            using (var factory = new ChannelFactory<ICalculator>("BasicHttpBinding_ICalculator"))
+            {
+                var channel = factory.CreateChannel();
+                return channel.Add(n1, n2);
             }
         }
     }
