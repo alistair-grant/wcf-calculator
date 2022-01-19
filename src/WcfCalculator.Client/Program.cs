@@ -7,7 +7,7 @@ namespace WcfCalculator.Client
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             try
             {
@@ -19,7 +19,8 @@ namespace WcfCalculator.Client
                 var n2 = random.Next(100 - n1);
 
                 //var result = AddWithCalculatorClient(n1, n2);
-                var result = AddWithChannelFactory(n1, n2);
+                //var result = AddWithChannelFactory(n1, n2);
+                var result = AddWithCustomChannelFactory(n1, n2);
 
                 WriteLine($"{n1} + {n2} = {result}");
             }
@@ -50,6 +51,15 @@ namespace WcfCalculator.Client
         private static double AddWithChannelFactory(double n1, double n2)
         {
             using (var factory = new ChannelFactory<ICalculator>("BasicHttpBinding_ICalculator"))
+            {
+                var channel = factory.CreateChannel();
+                return channel.Add(n1, n2);
+            }
+        }
+
+        private static double AddWithCustomChannelFactory(double n1, double n2)
+        {
+            using (var factory = new CustomChannelFactory<ICalculator>("BasicHttpBinding_ICalculator"))
             {
                 var channel = factory.CreateChannel();
                 return channel.Add(n1, n2);

@@ -3,4 +3,5 @@
     Debug="true"
     Service="WcfCalculator.Services.CalculatorService"
     CodeBehind="CalculatorService.svc.cs"
+    Factory="WcfCalculator.Services.CustomServiceHostFactory"
 %>
