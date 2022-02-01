@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
@@ -14,6 +15,12 @@ namespace WcfCalculator.Services
 
         protected override void OnOpening()
         {
+            var endpoints = Description.Endpoints;
+            foreach (var endpoint in endpoints.Where(IsSecondaryEndpoint).ToList())
+            {
+                endpoints.Remove(endpoint);
+            }
+
             base.OnOpening();
 
             var manager = new CustomServiceAuthorizationManager();
@@ -32,6 +39,11 @@ namespace WcfCalculator.Services
             }
 
             return authorizationBehavior;
+        }
+
+        private bool IsSecondaryEndpoint(ServiceEndpoint endpoint)
+        {
+            return endpoint.Name.EndsWith("_Secondary", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
